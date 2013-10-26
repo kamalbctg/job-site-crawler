@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+                                    http://www.springframework.org/schema/context  
+                                    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                                    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<context:component-scan base-package="org.bdbazar" />
+
+	<bean id="dataSource"	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/nutch2?useUnicode=true&amp;characterEncoding=UTF-8" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+
+	<bean id="transactionManager"	class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+	<bean id="bdJobsCrawlConfig" class="edu.uci.ics.crawler4j.crawler.CrawlConfig">
+		<property name="crawlStorageFolder" value="#{ systemProperties['java.io.tmpdir']}bdbazer#{ systemProperties['file.separator']}crawler" />
+		<property name="politenessDelay" value="1000" />
+		<property name="maxDepthOfCrawling" value="3" />
+		<property name="maxPagesToFetch" value="-1" />
+		<property name="resumableCrawling" value="false" />
+	</bean>
+	
+	<!--  
+	<bean id="bdJobsPageFetcher" class="edu.uci.ics.crawler4j.fetcher.PageFetcher">
+		<constructor-arg ref="bdJobsCrawlConfig" />
+	</bean>	
+	
+	<bean id="bdJobsRobotstxtConfig" class="edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig" />
+	
+	<bean id="bdJobsRobotstxtServer" class="edu.uci.ics.crawler4j.fetcher.PageFetcher">
+		<constructor-arg ref="bdJobsRobotstxtConfig" />
+		<constructor-arg ref="bdJobsPageFetcher" />
+	</bean>		
+	-->
+	
+	
+	<bean id="app" class="org.bdbazar.App">
+		<constructor-arg>
+			<list>
+				<ref bean="bdJobsCrawlController" />				
+			</list>
+		</constructor-arg>
+	</bean>	
+	
+</beans>  
+
+	
